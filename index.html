@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,8 +40,10 @@
     <label for="faction">Faction:</label>
     <select id="faction" onchange="renderBooks()">
       <option value="">All</option>
-      <option value="Ultramarines">Ultramarines</option>
-      <option value="Luna Wolves">Luna Wolves</option>
+    </select>
+    <label for="timePeriod">Era:</label>
+    <select id="timePeriod" onchange="renderBooks()">
+      <option value="">All</option>
     </select>
     <label for="read">Read:</label>
     <select id="read" onchange="renderBooks()">
@@ -52,7 +53,6 @@
     </select>
   </div>
   <div id="book-list"></div>
-
   <script>
     const books = [
       {
@@ -63,7 +63,7 @@
         character: "Horus Lupercal",
         series: "Horus Heresy",
         rating: 9.5,
-        summary: "The beginning of the Heresy: Horus ascends to Warmaster.",
+        summary: "The beginning of the Heresy: Horus ascends to Warmaster."
       },
       {
         title: "Know No Fear",
@@ -73,7 +73,7 @@
         character: "Roboute Guilliman",
         series: "Horus Heresy",
         rating: 9.3,
-        summary: "Word Bearers betray the Ultramarines at Calth.",
+        summary: "Word Bearers betray the Ultramarines at Calth."
       },
       {
         title: "Dark Imperium",
@@ -83,7 +83,27 @@
         character: "Roboute Guilliman",
         series: "Dark Imperium",
         rating: 8.7,
-        summary: "Guilliman returns to a corrupted Imperium.",
+        summary: "Guilliman returns to a corrupted Imperium."
+      },
+      {
+        title: "The Devastation of Baal",
+        author: "Guy Haley",
+        timePeriod: "41st Millennium",
+        faction: "Blood Angels",
+        character: "Dante",
+        series: "Space Marine Conquests",
+        rating: 9.0,
+        summary: "The Blood Angels defend Baal against a massive Tyranid invasion."
+      },
+      {
+        title: "Helsreach",
+        author: "Aaron Dembski-Bowden",
+        timePeriod: "41st Millennium",
+        faction: "Black Templars",
+        character: "Grimaldus",
+        series: "Space Marine Battles",
+        rating: 9.8,
+        summary: "Chaplain Grimaldus defends Helsreach Hive from Orks."
       }
     ];
 
@@ -95,8 +115,31 @@
       renderBooks();
     }
 
+    function populateFilters() {
+      const factions = [...new Set(books.map(b => b.faction))];
+      const periods = [...new Set(books.map(b => b.timePeriod))];
+
+      const factionSelect = document.getElementById('faction');
+      const periodSelect = document.getElementById('timePeriod');
+
+      factions.forEach(f => {
+        const option = document.createElement('option');
+        option.value = f;
+        option.textContent = f;
+        factionSelect.appendChild(option);
+      });
+
+      periods.forEach(p => {
+        const option = document.createElement('option');
+        option.value = p;
+        option.textContent = p;
+        periodSelect.appendChild(option);
+      });
+    }
+
     function renderBooks() {
       const factionFilter = document.getElementById('faction').value;
+      const timePeriodFilter = document.getElementById('timePeriod').value;
       const readFilter = document.getElementById('read').value;
       const container = document.getElementById('book-list');
       container.innerHTML = '';
@@ -104,6 +147,7 @@
       books.forEach(book => {
         const isRead = !!readStatus[book.title];
         if ((factionFilter && book.faction !== factionFilter) ||
+            (timePeriodFilter && book.timePeriod !== timePeriodFilter) ||
             (readFilter && String(isRead) !== readFilter)) return;
 
         const card = document.createElement('div');
@@ -119,6 +163,7 @@
       });
     }
 
+    populateFilters();
     renderBooks();
   </script>
 </body>
