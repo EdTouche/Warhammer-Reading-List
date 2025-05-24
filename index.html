@@ -3,163 +3,175 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Warhammer 40K Book Tracker</title>
+  <title>Codex Librarium</title>
   <style>
     body {
-      background-color: #000;
-      color: #fff;
-      font-family: sans-serif;
+      background: linear-gradient(to bottom, #0b0b0b, #1a1a1a);
+      color: #d0cfcf;
+      font-family: 'Segoe UI', sans-serif;
       padding: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+    h1 {
+      font-size: 2rem;
+      color: #e0d200;
+      text-align: center;
+      text-shadow: 1px 1px 4px #000;
+    }
+    .filter, .sort {
+      margin: 20px 0;
+      text-align: center;
+    }
+    select, button {
+      background-color: #222;
+      color: #e0e0e0;
+      padding: 6px 12px;
+      margin: 5px;
+      border: 1px solid #444;
+      border-radius: 4px;
     }
     .card {
       background-color: #1a1a1a;
+      border: 1px solid #333;
       padding: 20px;
       border-radius: 10px;
       margin-bottom: 20px;
+      box-shadow: 0 0 10px #000;
     }
-    .filter {
-      margin-bottom: 20px;
+    .card h2 {
+      color: #ffd700;
     }
-    button {
-      background-color: darkred;
-      color: white;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 5px;
+    .card small {
+      color: #999;
+    }
+    .card button {
       margin-top: 10px;
+      background-color: #700;
+      border: none;
+      padding: 6px 10px;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
     }
-    select {
-      margin-right: 10px;
-      padding: 5px;
+    .card button:hover {
+      background-color: #a00;
+    }
+    .random-output {
+      text-align: center;
+      font-style: italic;
+      margin-top: 15px;
     }
   </style>
 </head>
 <body>
   <h1>Codex Librarium: Space Marine Reading Tracker</h1>
+
   <div class="filter">
-    <label for="faction">Faction:</label>
-    <select id="faction" onchange="renderBooks()">
-      <option value="">All</option>
-    </select>
-    <label for="timePeriod">Era:</label>
-    <select id="timePeriod" onchange="renderBooks()">
-      <option value="">All</option>
-    </select>
-    <label for="read">Read:</label>
+    <label>Faction:</label>
+    <select id="faction" onchange="renderBooks()"><option value="">All</option></select>
+    <label>Era:</label>
+    <select id="timePeriod" onchange="renderBooks()"><option value="">All</option></select>
+    <label>Read:</label>
     <select id="read" onchange="renderBooks()">
       <option value="">All</option>
       <option value="true">Read</option>
       <option value="false">Unread</option>
     </select>
   </div>
+
+  <div class="sort">
+    <button onclick="sortBooks('faction')">Sort by Faction</button>
+    <button onclick="sortBooks('timePeriod')">Sort by Era</button>
+    <button onclick="recommendBook()">Random Book</button>
+  </div>
+
+  <div class="random-output" id="randomBookOutput"></div>
   <div id="book-list"></div>
+
   <script>
     const books = [
-      {
-        title: "Horus Rising",
-        author: "Dan Abnett",
-        timePeriod: "Horus Heresy",
-        faction: "Luna Wolves",
-        character: "Horus Lupercal",
-        series: "Horus Heresy",
-        rating: 9.5,
-        summary: "The beginning of the Heresy: Horus ascends to Warmaster."
-      },
-      {
-        title: "Know No Fear",
-        author: "Dan Abnett",
-        timePeriod: "Horus Heresy",
-        faction: "Ultramarines",
-        character: "Roboute Guilliman",
-        series: "Horus Heresy",
-        rating: 9.3,
-        summary: "Word Bearers betray the Ultramarines at Calth."
-      },
-      {
-        title: "Dark Imperium",
-        author: "Guy Haley",
-        timePeriod: "Indomitus Era",
-        faction: "Ultramarines",
-        character: "Roboute Guilliman",
-        series: "Dark Imperium",
-        rating: 8.7,
-        summary: "Guilliman returns to a corrupted Imperium."
-      },
-      {
-        title: "The Devastation of Baal",
-        author: "Guy Haley",
-        timePeriod: "41st Millennium",
-        faction: "Blood Angels",
-        character: "Dante",
-        series: "Space Marine Conquests",
-        rating: 9.0,
-        summary: "The Blood Angels defend Baal against a massive Tyranid invasion."
-      },
-      {
-        title: "Helsreach",
-        author: "Aaron Dembski-Bowden",
-        timePeriod: "41st Millennium",
-        faction: "Black Templars",
-        character: "Grimaldus",
-        series: "Space Marine Battles",
-        rating: 9.8,
-        summary: "Chaplain Grimaldus defends Helsreach Hive from Orks."
-      }
+      { title: "Horus Rising", author: "Dan Abnett", timePeriod: "Horus Heresy", faction: "Luna Wolves", character: "Horus", series: "Horus Heresy", rating: 9.5, summary: "Horus ascends to Warmaster. The spark of rebellion." },
+      { title: "Know No Fear", author: "Dan Abnett", timePeriod: "Horus Heresy", faction: "Ultramarines", character: "Guilliman", series: "Horus Heresy", rating: 9.3, summary: "Word Bearers betray the Ultramarines at Calth." },
+      { title: "The Unremembered Empire", author: "Dan Abnett", timePeriod: "Horus Heresy", faction: "Ultramarines", character: "Guilliman", series: "Horus Heresy", rating: 8.8, summary: "Guilliman creates Imperium Secundus." },
+      { title: "Ruinstorm", author: "David Annandale", timePeriod: "Horus Heresy", faction: "Blood Angels", character: "Sanguinius", series: "Horus Heresy", rating: 8.7, summary: "Guilliman, Sanguinius and Lion journey to Terra." },
+      { title: "Vulkan Lives", author: "Nick Kyme", timePeriod: "Horus Heresy", faction: "Salamanders", character: "Vulkan", series: "Horus Heresy", rating: 8.2, summary: "Loyalty and immortality of Vulkan explored." },
+      { title: "Helsreach", author: "Aaron Dembski-Bowden", timePeriod: "41st Millennium", faction: "Black Templars", character: "Grimaldus", series: "Space Marine Battles", rating: 9.8, summary: "Grimaldus defends Helsreach from Orks." },
+      { title: "The Devastation of Baal", author: "Guy Haley", timePeriod: "41st Millennium", faction: "Blood Angels", character: "Dante", series: "Space Marine Conquests", rating: 9.0, summary: "Blood Angels fight Tyranids at Baal." },
+      { title: "Dark Imperium", author: "Guy Haley", timePeriod: "Indomitus Era", faction: "Ultramarines", character: "Guilliman", series: "Dark Imperium", rating: 8.7, summary: "Guilliman returns to a broken Imperium." },
+      { title: "Plague War", author: "Guy Haley", timePeriod: "Indomitus Era", faction: "Ultramarines", character: "Guilliman", series: "Dark Imperium", rating: 8.6, summary: "Guilliman fights Mortarion and Nurgle." },
+      { title: "Godblight", author: "Guy Haley", timePeriod: "Indomitus Era", faction: "Ultramarines", character: "Guilliman", series: "Dark Imperium", rating: 9.0, summary: "Guilliman meets the Emperor again." },
+      { title: "Avenging Son", author: "Guy Haley", timePeriod: "Indomitus Era", faction: "Ultramarines", character: "Guilliman", series: "Dawn of Fire", rating: 8.5, summary: "Start of the Indomitus Crusade." },
+      { title: "The Lion: Son of the Forest", author: "Mike Brooks", timePeriod: "Indomitus Era", faction: "Dark Angels", character: "Lion El’Jonson", series: "Arks of Omen", rating: 9.2, summary: "The Lion returns in the dark millennium." }
     ];
 
-    let readStatus = JSON.parse(localStorage.getItem('readStatus') || '{}');
+    let readStatus = JSON.parse(localStorage.getItem("readStatus") || "{}");
+    let currentSort = "";
 
     function toggleRead(title) {
       readStatus[title] = !readStatus[title];
-      localStorage.setItem('readStatus', JSON.stringify(readStatus));
+      localStorage.setItem("readStatus", JSON.stringify(readStatus));
+      renderBooks();
+    }
+
+    function recommendBook() {
+      const unread = books.filter(b => !readStatus[b.title]);
+      if (unread.length === 0) {
+        document.getElementById("randomBookOutput").innerText = "You've read them all, battle-brother!";
+      } else {
+        const random = unread[Math.floor(Math.random() * unread.length)];
+        document.getElementById("randomBookOutput").innerText = `🧠 Try: "${random.title}" (${random.faction}, ${random.timePeriod})`;
+      }
+    }
+
+    function sortBooks(key) {
+      books.sort((a, b) => a[key].localeCompare(b[key]));
       renderBooks();
     }
 
     function populateFilters() {
       const factions = [...new Set(books.map(b => b.faction))];
-      const periods = [...new Set(books.map(b => b.timePeriod))];
-
-      const factionSelect = document.getElementById('faction');
-      const periodSelect = document.getElementById('timePeriod');
+      const eras = [...new Set(books.map(b => b.timePeriod))];
+      const factionSelect = document.getElementById("faction");
+      const eraSelect = document.getElementById("timePeriod");
 
       factions.forEach(f => {
-        const option = document.createElement('option');
-        option.value = f;
-        option.textContent = f;
-        factionSelect.appendChild(option);
+        const opt = document.createElement("option");
+        opt.value = f;
+        opt.textContent = f;
+        factionSelect.appendChild(opt);
       });
-
-      periods.forEach(p => {
-        const option = document.createElement('option');
-        option.value = p;
-        option.textContent = p;
-        periodSelect.appendChild(option);
+      eras.forEach(e => {
+        const opt = document.createElement("option");
+        opt.value = e;
+        opt.textContent = e;
+        eraSelect.appendChild(opt);
       });
     }
 
     function renderBooks() {
-      const factionFilter = document.getElementById('faction').value;
-      const timePeriodFilter = document.getElementById('timePeriod').value;
-      const readFilter = document.getElementById('read').value;
-      const container = document.getElementById('book-list');
-      container.innerHTML = '';
+      const faction = document.getElementById("faction").value;
+      const era = document.getElementById("timePeriod").value;
+      const read = document.getElementById("read").value;
+      const list = document.getElementById("book-list");
+      list.innerHTML = "";
 
       books.forEach(book => {
         const isRead = !!readStatus[book.title];
-        if ((factionFilter && book.faction !== factionFilter) ||
-            (timePeriodFilter && book.timePeriod !== timePeriodFilter) ||
-            (readFilter && String(isRead) !== readFilter)) return;
+        if ((faction && book.faction !== faction) ||
+            (era && book.timePeriod !== era) ||
+            (read && String(isRead) !== read)) return;
 
-        const card = document.createElement('div');
-        card.className = 'card';
+        const card = document.createElement("div");
+        card.className = "card";
         card.innerHTML = `
           <h2>${book.title}</h2>
           <p><strong>Author:</strong> ${book.author}</p>
           <p><small>${book.timePeriod} | ${book.faction} | ${book.series}</small></p>
           <p>${book.summary}</p>
-          <button onclick="toggleRead('${book.title}')">${isRead ? 'Mark as Unread' : 'Mark as Read'}</button>
+          <button onclick="toggleRead('${book.title}')">${isRead ? "Mark as Unread" : "Mark as Read"}</button>
         `;
-        container.appendChild(card);
+        list.appendChild(card);
       });
     }
 
