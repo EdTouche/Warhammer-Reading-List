@@ -4,21 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Warhammer 40K Book Tracker</title>
-    <style>
-      body { background-color: black; color: white; font-family: sans-serif; padding: 20px; }
-      .card { background: #1a1a1a; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
-      button { background: darkred; color: white; padding: 8px 12px; border: none; border-radius: 5px; }
-    </style>
+    <link href="/dist/output.css" rel="stylesheet">
   </head>
-  <body>
-    <h1>Codex Librarium: Space Marine Reading Tracker</h1>
-    <p>This is a placeholder static version. You can hook it up to a real build or React bundle here.</p>
-    <div class="card">
-      <h2>Horus Rising</h2>
-      <p>by Dan Abnett</p>
-      <p><small>Horus Heresy | Luna Wolves | Horus Heresy</small></p>
-      <p>The beginning of the Heresy: Horus ascends to Warmaster.</p>
-      <button>Mark as Read</button>
-    </div>
+  <body class="bg-black text-white">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
