@@ -1,13 +1,125 @@
+
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Warhammer 40K Book Tracker</title>
-    <link href="/dist/output.css" rel="stylesheet">
-  </head>
-  <body class="bg-black text-white">
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Warhammer 40K Book Tracker</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    .card {
+      background-color: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .filter {
+      margin-bottom: 20px;
+    }
+    button {
+      background-color: darkred;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    select {
+      margin-right: 10px;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Codex Librarium: Space Marine Reading Tracker</h1>
+  <div class="filter">
+    <label for="faction">Faction:</label>
+    <select id="faction" onchange="renderBooks()">
+      <option value="">All</option>
+      <option value="Ultramarines">Ultramarines</option>
+      <option value="Luna Wolves">Luna Wolves</option>
+    </select>
+    <label for="read">Read:</label>
+    <select id="read" onchange="renderBooks()">
+      <option value="">All</option>
+      <option value="true">Read</option>
+      <option value="false">Unread</option>
+    </select>
+  </div>
+  <div id="book-list"></div>
+
+  <script>
+    const books = [
+      {
+        title: "Horus Rising",
+        author: "Dan Abnett",
+        timePeriod: "Horus Heresy",
+        faction: "Luna Wolves",
+        character: "Horus Lupercal",
+        series: "Horus Heresy",
+        rating: 9.5,
+        summary: "The beginning of the Heresy: Horus ascends to Warmaster.",
+      },
+      {
+        title: "Know No Fear",
+        author: "Dan Abnett",
+        timePeriod: "Horus Heresy",
+        faction: "Ultramarines",
+        character: "Roboute Guilliman",
+        series: "Horus Heresy",
+        rating: 9.3,
+        summary: "Word Bearers betray the Ultramarines at Calth.",
+      },
+      {
+        title: "Dark Imperium",
+        author: "Guy Haley",
+        timePeriod: "Indomitus Era",
+        faction: "Ultramarines",
+        character: "Roboute Guilliman",
+        series: "Dark Imperium",
+        rating: 8.7,
+        summary: "Guilliman returns to a corrupted Imperium.",
+      }
+    ];
+
+    let readStatus = JSON.parse(localStorage.getItem('readStatus') || '{}');
+
+    function toggleRead(title) {
+      readStatus[title] = !readStatus[title];
+      localStorage.setItem('readStatus', JSON.stringify(readStatus));
+      renderBooks();
+    }
+
+    function renderBooks() {
+      const factionFilter = document.getElementById('faction').value;
+      const readFilter = document.getElementById('read').value;
+      const container = document.getElementById('book-list');
+      container.innerHTML = '';
+
+      books.forEach(book => {
+        const isRead = !!readStatus[book.title];
+        if ((factionFilter && book.faction !== factionFilter) ||
+            (readFilter && String(isRead) !== readFilter)) return;
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h2>${book.title}</h2>
+          <p><strong>Author:</strong> ${book.author}</p>
+          <p><small>${book.timePeriod} | ${book.faction} | ${book.series}</small></p>
+          <p>${book.summary}</p>
+          <button onclick="toggleRead('${book.title}')">${isRead ? 'Mark as Unread' : 'Mark as Read'}</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    renderBooks();
+  </script>
+</body>
 </html>
